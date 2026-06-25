@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A one-page guide for building reliable AI rule assistants with retrieval, source attribution, and certainty scoring.">
+    <title>Build an AI Rule Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bitter:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="progress-bar" aria-hidden="true"></div>
+
+    <header class="site-header" id="top">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <nav class="pill-nav" aria-label="Primary navigation">
+            <a href="#problem">Problem</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#retrieval">Retrieval</a>
+            <a href="#trust">Trust</a>
+            <a href="#takeaways">Takeaways</a>
+        </nav>
+    </header>
+
+    <main id="main">
+        <section class="hero section-shell">
+            <div class="hero-grid">
+                <div class="hero-copy">
+                    <p class="eyebrow">Guide for reliable domain assistants</p>
+                    <h1>Build an AI Rule Assistant that knows when to answer and when to hesitate.</h1>
+                    <p class="hero-lede">
+                        Standard chatbots are fast, but rule systems demand traceable answers. This guide explains how to combine retrieval, structured output, source attribution, and certainty scoring to build an assistant for any complex rule domain.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="#architecture">Explore the system</a>
+                        <a class="button button-secondary" href="#answer-model">See answer model</a>
+                    </div>
+                </div>
+
+                <aside class="example-card" aria-label="Warhammer Rule Assistant example">
+                    <div class="card-header">
+                        <span class="card-kicker">Example implementation</span>
+                        <span class="status-dot"></span>
+                    </div>
+                    <h2>Warhammer Rule Assistant</h2>
+                    <p>Ask a rules question, choose Age of Sigmar or Warhammer 40,000, and receive a grounded answer based on official rule sources.</p>
+                    <div class="game-toggle" aria-label="Supported systems">
+                        <span>Age of Sigmar</span>
+                        <span>40K</span>
+                    </div>
+                    <dl class="mini-stats">
+                        <div>
+                            <dt>Answer shape</dt>
+                            <dd>Short, detailed, source, certainty</dd>
+                        </div>
+                        <div>
+                            <dt>Verification</dt>
+                            <dd>Core rules PDF links and source panels</dd>
+                        </div>
+                    </dl>
+                </aside>
+            </div>
+        </section>
+
+        <section class="section-shell intro-section">
+            <div class="section-heading">
+                <p class="eyebrow">What we are building</p>
+                <h2>A reliable AI rule assistant</h2>
+            </div>
+            <div class="intro-grid">
+                <article class="content-card">
+                    <h3>Not just a chatbot</h3>
+                    <p>A rule assistant must answer from an approved knowledge base, show where the answer came from, and avoid pretending that uncertain interpretations are facts.</p>
+                </article>
+                <article class="content-card">
+                    <h3>Rules are unusually hard</h3>
+                    <p>They include exceptions, timing windows, nested definitions, conflicting interpretations, and frequent updates. A confident but unsupported answer can be worse than no answer.</p>
+                </article>
+                <article class="content-card">
+                    <h3>Reliability beats speed</h3>
+                    <p>The goal is not the fastest response. The goal is a response that users can inspect, verify, and challenge when the rules are ambiguous.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-shell problem-section" id="problem">
+            <div class="split-layout">
+                <div class="section-heading sticky-heading">
+                    <p class="eyebrow">The problem</p>
+                    <h2>Why standard LLMs fail at rule systems</h2>
+                    <p>Large language models are excellent at language, but rules-heavy domains need more than fluent text.</p>
+                </div>
+                <div class="problem-list">
+                    <article class="problem-item">
+                        <span class="problem-number">01</span>
+                        <div>
+                            <h3>Hallucinations look convincing</h3>
+                            <p>An LLM may invent a rule, merge old editions, or apply a similar rule from another domain unless the system constrains its context.</p>
+                        </div>
+                    </article>
+                    <article class="problem-item">
+                        <span class="problem-number">02</span>
+                        <div>
+                            <h3>Important details hide in edge cases</h3>
+                            <p>Rule answers often depend on exact timing, exceptions, keywords, source hierarchy, or a single sentence in a faction-specific entry.</p>
+                        </div>
+                    </article>
+                    <article class="problem-item">
+                        <span class="problem-number">03</span>
+                        <div>
+                            <h3>Users need proof, not vibes</h3>
+                            <p>Without source attribution and certainty language, users cannot tell whether an answer is directly supported, interpreted, or barely covered.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-shell architecture-section" id="architecture">
+            <div class="section-heading center-heading">
+                <p class="eyebrow">High-level architecture</p>
+                <h2>Query, retrieve, ground, answer</h2>
+                <p>The Warhammer assistant uses Laravel and Vue for the interface, then sends questions to a Python RAG service. The same pattern works for any domain with reliable source documents.</p>
+            </div>
+
+            <div class="flow-diagram" aria-label="Rule assistant architecture flow">
+                <article class="flow-step">
+                    <span>1</span>
+                    <h3>User query</h3>
+                    <p>The user asks in natural language and selects the relevant ruleset or domain.</p>
+                </article>
+                <article class="flow-step">
+                    <span>2</span>
+                    <h3>Retrieval system</h3>
+                    <p>The backend searches indexed source material for the most relevant rules.</p>
+                </article>
+                <article class="flow-step">
+                    <span>3</span>
+                    <h3>Context selection</h3>
+                    <p>Semantic chunks, keyword matches, and concept sections are combined into a compact prompt.</p>
+                </article>
+                <article class="flow-step">
+                    <span>4</span>
+                    <h3>LLM response</h3>
+                    <p>The model answers only from the supplied context and follows a strict response format.</p>
+                </article>
+                <article class="flow-step">
+                    <span>5</span>
+                    <h3>Structured answer</h3>
+                    <p>The UI shows a short answer, detailed explanation, sources, and certainty level.</p>
+                </article>
+            </div>
+
+            <ul class="implementation-strip" aria-label="Warhammer implementation details">
+                <li><strong>Frontend:</strong> Vue chat interface with a Questions and Core Rules navigation pattern.</li>
+                <li><strong>API:</strong> Laravel accepts the question at <span>/api/chat</span> and proxies it to Python.</li>
+                <li><strong>RAG:</strong> FastAPI answers through FAISS indexes built from markdown rule sources.</li>
+                <li><strong>Trust:</strong> Responses include structured JSON, source labels, certainty, and PDF deep links.</li>
+            </ul>
+        </section>
+
+        <section class="section-shell retrieval-section" id="retrieval">
+            <div class="split-layout">
+                <div class="section-heading sticky-heading">
+                    <p class="eyebrow">Vector-based retrieval</p>
+                    <h2>RAG makes the model read before it speaks</h2>
+                    <p>Retrieval-Augmented Generation gives the assistant a focused packet of relevant source material instead of asking the model to rely on memory.</p>
+                </div>
+
+                <div class="stack-list">
+                    <article class="content-card">
+                        <h3>Chunk the knowledge</h3>
+                        <p>Source documents are split into meaningful sections. In the Warhammer assistant, markdown rules are chunked by headings and stored with metadata such as game system, faction, and document type.</p>
+                    </article>
+                    <article class="content-card">
+                        <h3>Embed each chunk</h3>
+                        <p>Embeddings turn text into numbers that capture meaning. Similar rule concepts end up close together even when the user uses different wording.</p>
+                    </article>
+                    <article class="content-card">
+                        <h3>Search by similarity</h3>
+                        <p>A vector index finds chunks that are close to the user question. Similarity search improves relevance because the model sees the likely rule text before generating an answer.</p>
+                    </article>
+                    <article class="content-card">
+                        <h3>Add precise retrieval paths</h3>
+                        <p>The example project also uses keyword and heading search, fuzzy matching for named rules or units, and concept injection for timing, phase, and sequencing questions.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-shell answer-section" id="answer-model">
+            <div class="section-heading center-heading">
+                <p class="eyebrow">Structured output</p>
+                <h2>Make every answer inspectable</h2>
+                <p>A reliable assistant should not return one large paragraph. It should separate the conclusion, reasoning, source trail, and uncertainty.</p>
+            </div>
+
+            <div class="answer-layout">
+                <div class="answer-card" aria-label="Example answer card">
+                    <button class="accordion-trigger" type="button" aria-expanded="true" aria-controls="short-answer-panel">
+                        <span>Short Answer</span>
+                        <span class="chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="accordion-panel is-open" id="short-answer-panel">
+                        <div class="short-answer-row">
+                            <p>Yes, but only if the rule text and timing window support it.</p>
+                            <span class="certainty-badge" data-level="1">1</span>
+                        </div>
+                    </div>
+
+                    <button class="accordion-trigger" type="button" aria-expanded="false" aria-controls="detailed-answer-panel">
+                        <span>Detailed Answer</span>
+                        <span class="chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="accordion-panel" id="detailed-answer-panel" hidden>
+                        <p>The assistant should quote or paraphrase only the retrieved rules. If an edge case depends on timing, definitions, or source hierarchy, it explains the sequence step by step.</p>
+                    </div>
+
+                    <button class="accordion-trigger" type="button" aria-expanded="false" aria-controls="source-panel">
+                        <span>Source</span>
+                        <span class="chevron" aria-hidden="true"></span>
+                    </button>
+                    <div class="accordion-panel" id="source-panel" hidden>
+                        <p>Core Rules and relevant faction or domain documents, with optional deep links to the exact PDF section.</p>
+                    </div>
+                </div>
+
+                <div class="certainty-panel">
+                    <h3>Certainty scale</h3>
+                    <p>Certainty is not absolute truth. It is a trust-calibration signal based on source strength, consistency, and coverage.</p>
+                    <ol class="certainty-list">
+                        <li><span data-level="1">1</span> Directly supported by the retrieved rules.</li>
+                        <li><span data-level="2">2</span> Mostly supported, but some interpretation is needed.</li>
+                        <li><span data-level="3">3</span> Barely covered or potentially contradictory.</li>
+                        <li><span data-level="4">4</span> Not covered well enough to answer confidently.</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-shell trust-section" id="trust">
+            <div class="section-heading center-heading">
+                <p class="eyebrow">Source attribution and trust</p>
+                <h2>Traceability turns an answer into something users can verify</h2>
+            </div>
+
+            <div class="trust-grid">
+                <article class="content-card accent-card">
+                    <h3>Source panels</h3>
+                    <p>Show which rulebooks, policies, lessons, standards, or manuals contributed to the answer. Users should know what the model relied on.</p>
+                </article>
+                <article class="content-card accent-card">
+                    <h3>Deep links</h3>
+                    <p>When possible, link rule terms or answer sections back to the exact PDF page, article, or document section. Verification should be one click away.</p>
+                </article>
+                <article class="content-card accent-card">
+                    <h3>Explicit uncertainty</h3>
+                    <p>Use certainty scoring to separate directly supported answers from interpreted ones. This prevents the assistant from sounding equally confident about everything.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-shell principles-section">
+            <div class="section-heading">
+                <p class="eyebrow">Design principles</p>
+                <h2>Rules for building rule assistants</h2>
+            </div>
+            <div class="principles-grid">
+                <article>
+                    <span>01</span>
+                    <h3>Transparency over black-box answers</h3>
+                    <p>Make the retrieval process visible through sources, quotes, and explanation structure.</p>
+                </article>
+                <article>
+                    <span>02</span>
+                    <h3>Traceability of information</h3>
+                    <p>Every confident answer should point back to the documents that support it.</p>
+                </article>
+                <article>
+                    <span>03</span>
+                    <h3>Trust calibration</h3>
+                    <p>Users should understand when the system is certain, interpreting, or unable to answer.</p>
+                </article>
+                <article>
+                    <span>04</span>
+                    <h3>Consistent output</h3>
+                    <p>Structured responses make the UI predictable and make backend validation easier.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-shell applications-section">
+            <div class="section-heading center-heading">
+                <p class="eyebrow">Where this applies</p>
+                <h2>The same pattern works beyond tabletop games</h2>
+            </div>
+            <div class="application-tabs" data-tabs>
+                <div class="tab-list" role="tablist" aria-label="Application examples">
+                    <button type="button" role="tab" aria-selected="true" aria-controls="tab-games" id="tab-games-button">Tabletop games</button>
+                    <button type="button" role="tab" aria-selected="false" aria-controls="tab-education" id="tab-education-button">Education</button>
+                    <button type="button" role="tab" aria-selected="false" aria-controls="tab-knowledge" id="tab-knowledge-button">Knowledge bases</button>
+                </div>
+                <div class="tab-panel is-active" role="tabpanel" id="tab-games" aria-labelledby="tab-games-button">
+                    <h3>Tabletop and roleplaying games</h3>
+                    <p>Handle editions, factions, rule exceptions, scenario packs, errata, and timing disputes with source-linked answers.</p>
+                </div>
+                <div class="tab-panel" role="tabpanel" id="tab-education" aria-labelledby="tab-education-button" hidden>
+                    <h3>Education systems</h3>
+                    <p>Guide students through course rules, grading rubrics, institutional policies, and assignment requirements without inventing exceptions.</p>
+                </div>
+                <div class="tab-panel" role="tabpanel" id="tab-knowledge" aria-labelledby="tab-knowledge-button" hidden>
+                    <h3>Operational knowledge assistants</h3>
+                    <p>Support teams can apply the same design to product manuals, compliance policies, onboarding material, or internal process documentation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-shell takeaways-section" id="takeaways">
+            <div class="takeaway-card">
+                <div>
+                    <p class="eyebrow">Key takeaways</p>
+                    <h2>Reliability is a system design problem</h2>
+                    <p>A strong model helps, but the surrounding architecture decides whether users can trust the answer.</p>
+                </div>
+                <ul class="takeaway-list">
+                    <li>RAG improves relevance by retrieving domain-specific context before generation.</li>
+                    <li>Sources improve trust because users can verify the answer themselves.</li>
+                    <li>Confidence scoring improves understanding by showing how strongly the rules support the conclusion.</li>
+                    <li>Structured output makes the assistant easier to test, render, and reason about.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- <footer class="site-footer">
+        <a href="#top">Back to top</a>
+        <span>Static HTML, CSS, and JavaScript for GitHub Pages.</span>
+    </footer> -->
+
+    <script src="script.js"></script>
+</body>
+</html>
