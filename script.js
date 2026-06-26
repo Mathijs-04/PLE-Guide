@@ -43,6 +43,20 @@ document.querySelectorAll(".accordion-trigger").forEach((trigger) => {
     });
 });
 
+document.querySelectorAll(".game-toggle").forEach((toggle) => {
+    const buttons = Array.from(toggle.querySelectorAll("button"));
+
+    buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+            buttons.forEach((item) => {
+                const isSelected = item === button;
+                item.classList.toggle("is-selected", isSelected);
+                item.setAttribute("aria-pressed", String(isSelected));
+            });
+        });
+    });
+});
+
 document.querySelectorAll("[data-tabs]").forEach((tabs) => {
     const tabButtons = Array.from(tabs.querySelectorAll('[role="tab"]'));
     const tabPanels = Array.from(tabs.querySelectorAll('[role="tabpanel"]'));

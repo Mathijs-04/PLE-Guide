@@ -49,8 +49,8 @@
                     <h2>Warhammer Rule Assistant</h2>
                     <p>Ask a rules question, choose Age of Sigmar or Warhammer 40,000, and receive a grounded answer based on official rule sources.</p>
                     <div class="game-toggle" aria-label="Supported systems">
-                        <span>Age of Sigmar</span>
-                        <span>40K</span>
+                        <button class="is-selected" type="button" aria-pressed="true">Age of Sigmar</button>
+                        <button type="button" aria-pressed="false">40.000</button>
                     </div>
                     <dl class="mini-stats">
                         <div>
@@ -107,7 +107,7 @@
 
         <section class="section-shell problem-section" id="problem">
             <div class="split-layout">
-                <div class="section-heading sticky-heading">
+                <div class="section-heading">
                     <p class="eyebrow">The problem</p>
                     <h2>Why standard LLMs fail at rule systems</h2>
                     <p>Large language models are excellent at language, but rules-heavy domains need more than fluent text.</p>
