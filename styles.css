@@ -387,18 +387,27 @@ li {
     padding: 0.28rem;
 }
 
-.game-toggle span {
+.game-toggle button {
     flex: 1;
+    border: 0;
     border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
     padding: 0.55rem 0.65rem;
     color: var(--muted);
     font-size: 0.78rem;
     text-align: center;
+    transition:
+        background 180ms ease,
+        color 180ms ease;
 }
 
-.game-toggle span:first-child {
+.game-toggle button:hover,
+.game-toggle button:focus-visible,
+.game-toggle button.is-selected {
     background: var(--foreground);
     color: var(--background);
+    outline: none;
 }
 
 .mini-stats {
